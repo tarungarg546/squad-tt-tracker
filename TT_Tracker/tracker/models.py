@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 class Team(models.Model):
     team_name = models.CharField(max_length=30, unique=True)
     user_1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='firstplayers')
-    user_2 = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='secondplayers', help_text='If Singles, leave this empty')
+    user_2 = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='secondplayers')
 
     def __str__(self):
         return self.team_name
