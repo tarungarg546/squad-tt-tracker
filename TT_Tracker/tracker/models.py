@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 
 class Team(models.Model):
-    team_name = models.CharField(max_length=30, unique=True, help_text='Enter as Text. Maximum Length:30')
+    team_name = models.CharField(max_length=30, unique=True)
     user_1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='firstplayers')
     user_2 = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='secondplayers', help_text='If Singles, leave this empty')
 
@@ -26,9 +26,9 @@ class Match(models.Model):
         (DOUBLES_VALUE, 'Doubles'),
     )
 
-    category = models.PositiveSmallIntegerField(choices=CATEGORIES)
-    team_1 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='firstteams', help_text='object in Teams DB')
-    team_2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='secondteams', help_text='object in Teams DB')
+    category = models.PositiveSmallIntegerField(choices=CATEGORIES, help_text='Type of Match')
+    team_1 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='firstteams')
+    team_2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='secondteams')
     winner = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='winners', blank=True, null=True)
     started_at = models.DateTimeField(default=timezone.now)
     ended_at = models.DateTimeField(default=timezone.now)
@@ -66,5 +66,5 @@ class Match(models.Model):
 
 class Game(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
-    team_1_score = models.IntegerField(help_text='Enter in Integer Format')
-    team_2_score = models.IntegerField(help_text='Enter in Integer Format')
+    team_1_score = models.IntegerField()
+    team_2_score = models.IntegerField()
