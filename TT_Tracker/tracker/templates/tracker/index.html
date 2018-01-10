@@ -1,0 +1,22 @@
+{% extends "tracker/base.html" %}
+{% block content %}
+<h1>Welcome to Squad TT Tracker!</h1>
+<form action="{% url 'tracker:compare' %}" method="post">
+    {% csrf_token %}
+    <label for="team1">Team 1</label>
+    <select name="team_1" id="team1" required>
+        Team 1
+        {% for team in team_list %}
+        <option value="{{ team.id }}">{{ team }}</option>
+        {% endfor %}
+    </select>
+    <label for="team2">Team 2</label>
+    <select name="team_2" id="team2" required>
+        Team 2
+        {% for team in team_list %}
+        <option value="{{ team.id }}">{{ team }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" />
+</form>
+{% endblock %}
