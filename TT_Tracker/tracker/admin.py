@@ -9,6 +9,8 @@ class GameInline(admin.TabularInline):
 
 
 class MatchAdmin(admin.ModelAdmin):
+    list_display = ('id', 'category', 'team_1', 'team_2', 'winner', 'started_at', 'ended_at')
+
     fieldsets = [
         (None,                  {'fields': ['category', 'team_1', 'team_2', 'winner']}),
         ('Date Information',    {'fields': ['started_at', 'ended_at']})
