@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.db import models
 
 from .models import Team, User, Match
 
@@ -25,32 +26,37 @@ def compare_teams(request):
     else:
         common_matches = (post_team_1.firstteams.filter(team_2=post_team_2)
                           | post_team_1.secondteams.filter(team_1=post_team_2))
-        total_matches = len(common_matches)
-        team_1_wins = 0
-        team_2_wins = 0
-        # Find number of wins for each team
-        for match in common_matches:
-            if match.winner == post_team_1:
-                team_1_wins += 1
-            else:
-                team_2_wins += 1
+        # Aggregate wins of both teams
+        win_dict = common_matches.aggregate(
+            team_1_wins=models.Sum(
+                models.Case(models.When(winner=post_team_1, then=1), output_field=models.IntegerField())
+            ),
+            team_2_wins=models.Sum(
+                models.Case(models.When(winner=post_team_2, then=1), output_field=models.IntegerField())
+            )
+        )
 
+        if win_dict['team_1_wins'] is None:
+            win_dict['team_1_wins'] = 0
+        if win_dict['team_2_wins'] is None:
+            win_dict['team_2_wins'] = 0
+
+        total_matches = win_dict['team_1_wins'] + win_dict['team_2_wins']
         if total_matches == 0:
             team_1_win_ratio = 0
             team_2_win_ratio = 0
         else:
-            team_1_win_ratio = float(team_1_wins)/float(total_matches)
-            team_2_win_ratio = float(team_2_wins)/float(total_matches)
+            team_1_win_ratio = float(win_dict['team_1_wins'])/float(total_matches)
+            team_2_win_ratio = float(win_dict['team_2_wins'])/float(total_matches)
         context = {
             'common_matches': common_matches,
             'total_matches': total_matches,
-            'team_1_wins': team_1_wins,
-            'team_2_wins': team_2_wins,
             'team_1_win_ratio': team_1_win_ratio,
             'team_2_win_ratio': team_2_win_ratio,
             'team_1': post_team_1,
             'team_2': post_team_2
         }
+        context.update(win_dict)
         return render(request, 'tracker/compare_teams.html', context)
 
 
