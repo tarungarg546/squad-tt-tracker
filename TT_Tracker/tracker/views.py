@@ -1,3 +1,5 @@
+from __future__ import division
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Case, When, IntegerField, Q, Value
@@ -47,8 +49,8 @@ def compare_teams(request):
         team_1_win_ratio = 0
         team_2_win_ratio = 0
     else:
-        team_1_win_ratio = float(win_dict['team_1_wins'])/float(total_matches)
-        team_2_win_ratio = float(win_dict['team_2_wins'])/float(total_matches)
+        team_1_win_ratio = win_dict['team_1_wins']/total_matches
+        team_2_win_ratio = win_dict['team_2_wins']/total_matches
     context = {
         'common_matches': common_matches,
         'total_matches': total_matches,
