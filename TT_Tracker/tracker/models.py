@@ -35,7 +35,6 @@ class Match(models.Model):
         return str(self.id)
 
     def save(self, *args, **kwargs):
-        self.clean()
         games_of_match = self.game_set.all()
         total_games = len(games_of_match)
         team_1_wins = 0

@@ -77,7 +77,8 @@ def compare_users(request):
         post_user_1 = post_user_list[1]
         post_user_2 = post_user_list[0]
 
-    common_matches = Match.objects.filter((Q(team_1__user_1=post_user_1) | Q(team_1__user_2=post_user_1))
+    common_matches = Match.objects.select_related('team_1__user_1', 'team_1__user_2', 'team_2__user_1', 'team_2__user_2', 'winner').filter(
+                                            (Q(team_1__user_1=post_user_1) | Q(team_1__user_2=post_user_1))
                                           & (Q(team_2__user_1=post_user_2) | Q(team_2__user_2=post_user_2))
                                           | (Q(team_2__user_1=post_user_1) | Q(team_2__user_2=post_user_1))
                                           & (Q(team_1__user_1=post_user_2) | Q(team_1__user_2=post_user_2)))
@@ -100,8 +101,8 @@ def compare_users(request):
         user_1_win_ratio = 0
         user_2_win_ratio = 0
     else:
-        user_1_win_ratio = float(played_dict['user_1_wins'])/float(matches_played)
-        user_2_win_ratio = float(played_dict['user_2_wins'])/float(matches_played)
+        user_1_win_ratio = played_dict['user_1_wins']/matches_played
+        user_2_win_ratio = played_dict['user_2_wins']/matches_played
     context = {
         'user_1': post_user_1,
         'user_2': post_user_2,
