@@ -21,7 +21,7 @@ def index(request):
 
 @login_required
 def compare_teams(request):
-    # Redirect back if teams entered are same
+    # Redirect back if teams entered are same or none
     if request.POST['team_1'] == request.POST['team_2'] or request.POST['team_1'] is None or request.POST['team_2'] is None:
         return redirect('tracker:index')
     # Get the two Team objects required through their id
@@ -32,8 +32,9 @@ def compare_teams(request):
     else:
         post_team_1 = post_team_list[1]
         post_team_2 = post_team_list[0]
-    common_matches = (post_team_1.firstteams.filter(team_2=post_team_2)
-                      | post_team_1.secondteams.filter(team_1=post_team_2))
+    common_matches = Match.objects.select_related('team_1', 'team_2').filter(
+                   (Q(team_1=post_team_1) & Q(team_2=post_team_2)) | (Q(team_1=post_team_2) & Q(team_2=post_team_1)))
+
     # Aggregate wins of both teams
     win_dict = common_matches.aggregate(
         team_1_wins=Coalesce(Sum(
