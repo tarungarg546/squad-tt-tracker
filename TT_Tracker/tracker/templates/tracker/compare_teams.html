@@ -1,0 +1,26 @@
+{% extends 'tracker/base.html' %}
+{% block content %}
+<h1>{{ team_1 }} VS {{ team_2 }} Stats:</h1>
+<h2>Total Matches Played: {{ total_matches }}</h2>
+<h1>{{ team_1 }}</h1><h2>- wins: {{ team_1_wins }} - win ratio: {{ team_1_win_ratio }}</h2>
+<h1>{{ team_2 }}</h1><h2>- wins: {{ team_2_wins }} - win ratio: {{ team_2_win_ratio }}</h2>
+<h1>Matches:</h1>
+<table border="1px">
+    <tr>
+        <th>Match ID</th>
+        <th>Winner</th>
+        <th>Started At</th>
+        <th>Ended At</th>
+    </tr>
+{% for match in common_matches %}
+    <tr>
+        <td>{{ match.id }}</td>
+        <td>{{ match.winner }}</td>
+        <td>{{ match.started_at }}</td>
+        <td>{{ match.ended_at }}</td>
+    </tr>
+{% endfor %}
+</table>
+<br>
+<a href="{% url 'tracker:index' %}">Click here to Compare others</a>
+{% endblock %}
